@@ -43,8 +43,8 @@ manageHookComposer = composeAll . concatMap doShift
                   doShift (ws,apps) = [className =? s --> doF (shift ws) | s <- apps]
 
 keys' :: XConfig Layout -> Map (KeyMask, KeySym) (X ())
-keys' conf@(XConfig {XMonad.modMask = modMask}) = fromList . concat $
-    sequence (sequence [programs, audio, layouts, focus, shrinkAndExpand, recompileAndQuit, shifts] modMask) conf
+keys' conf@(XConfig {XMonad.modMask = modMask}) = fromList . concat . flip sequence conf . flip sequence modMask $
+  [programs, audio, layouts, focus, shrinkAndExpand, recompileAndQuit, shifts]
       where
         programs :: KeyMask -> XConfig Layout -> [((KeyMask, KeySym), X ())]
         programs modMask conf = let modMaskS = modMask .|. shiftMask in
