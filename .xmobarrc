@@ -1,0 +1,30 @@
+Config { font = "-misc-fixed-*-*-*-*-12-*-*-*-*-*-*-*"
+	     , bgColor = "#000033"
+	     , fgColor = "white"
+	     , position = Top
+	     , lowerOnStart = False
+	     , sepChar = "%"
+	     , alignSep = "}{"
+	     , commands =	[
+           Run Cpu ["-L","3","-H","50","--low","lightgreen","--normal","green","--high","red"] 10
+			   , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+			   , Run Memory ["-t", "Mem: <usedratio>%",
+                       "-L", "75",
+                       "-H", "85",
+                       "--high", "red",
+                       "--normal", "darkorange",
+                       "--low", "green"
+                      ] 10
+			   , Run Swap  ["-L","5","-H","50","--normal","yellow","--high","red","--low","green"] 10
+			   , Run StdinReader
+         , Run Weather "EDLW" ["-t", "<station>: <tempC>°C"] 9000
+         , Run DynNetwork ["-t", "<dev>: <rx>kB/s * <tx>kB/s",
+                           "-L", "10000",
+                           "-H", "100000",
+                           "--low", "lightgreen",
+                           "--normal", "green",
+                           "--high", "darkorange"
+                          ] 10
+			 ]
+	     , template = " %cpu% | %memory% * %swap% | %dynnetwork% }%StdinReader%{ %EDLW% | %date% "
+	     }
