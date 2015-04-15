@@ -29,15 +29,15 @@ conf = defaultConfig { modMask            = mod4Mask
                 where
                   workspaces' = ["main","web1"] ++ map (("dev" ++) . show) [1..6] ++ ["game","chat","misc"]
                   startupHook' = return ()
-                  manageHook' = manageHookComposer
+                  manageHook' = manageHookShifts
                     [ ("web1", ["Firefox"])
                     , ("chat", ["Skype","Xchat"])
                     , ("dev1", ["Eclipse"])
                     , ("misc", ["Clementine","clementine","Steam"])
                     ]
 
-manageHookComposer :: [(String, [String])] -> ManageHook
-manageHookComposer = composeAll . concatMap doShift
+manageHookShifts :: [(String, [String])] -> ManageHook
+manageHookShifts = composeAll . concatMap doShift
                 where
                   doShift :: (String, [String]) -> [ManageHook]
                   doShift (ws,apps) = [className =? s --> doF (shift ws) | s <- apps]
