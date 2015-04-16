@@ -54,7 +54,7 @@ set hlsearch                  " Highlight Search Results
 set incsearch                 " Modern Search
 
 " Cursor Movement
-map j gj                      " Treat long lines as break lines
+map j gj
 map k gk
 
 set magic
@@ -79,7 +79,7 @@ set noswapfile
 """"""""""""""""""""""""
 " Commands and shortcuts
 """"""""""""""""""""""""
-cmap w!! w !sudo tee > /dev/null %    " w!! for save as root
+cmap w!! w !sudo tee > /dev/null %
 
 " Tabs
 cnoreabbrev t tabedit
