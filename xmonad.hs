@@ -34,7 +34,7 @@ conf = defaultConfig { modMask            = mod4Mask
                     , ("chat", ["Skype","Xchat"])
                     , ("dev1", ["Eclipse"])
                     , ("misc", ["Clementine","clementine","Steam"])
-                    ] <> manageHookFloats []
+                    ] <+> manageHookFloats []
 
 manageHookShifts :: [(String, [String])] -> ManageHook
 manageHookShifts = composeAll . concatMap doShift
@@ -43,10 +43,10 @@ manageHookShifts = composeAll . concatMap doShift
                   doShift (ws,apps) = [className =? s --> doF (shift ws) | s <- apps]
 
 manageHookFloats :: [String] -> ManageHook
-manageHookFloats = map doFloat
+manageHookFloats = composeAll . map doFloat'
                 where
-                  doFloat :: String -> ManageHook
-                  doFloat s = className =? s --> doFloat
+                  doFloat' :: String -> ManageHook
+                  doFloat' s = className =? s --> doFloat
 
 keys' :: XConfig Layout -> Map (KeyMask, KeySym) (X ())
 keys' conf@(XConfig {XMonad.modMask = modMask}) = fromList . concat . flip sequence conf . flip sequence modMask $
