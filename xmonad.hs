@@ -107,9 +107,19 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = fromList . concat . flip seque
           , ((modMaskS, xK_k    ), shiftNextScreen)
           ]
 
+xmobarpp :: PP
+xmobarpp = xmobarPP { ppSep = " "
+                    , ppOrder = \(ws:_:t:_) -> [ws,t]
+                    , ppTitle = formatTitle
+                    }
+                  where
+                    formatTitle :: String -> String
+                    formatTitle str = let title = shorten 30 str in
+                       replicate (30 - length title) ' '
+                       ++ xmobarColor "green" "black" $ wrap "<<" ">>" $ xmobarColor "grey" "black" title
+
 main :: IO ()
 main = do
-  let uhook    = withUrgencyHookC NoUrgencyHook UrgencyConfig { suppressWhen = Focused, remindWhen = Dont }
-  let xmobarpp = xmobarPP { ppOrder = \(ws:_) -> [ws] }
+  let uhook = withUrgencyHookC NoUrgencyHook UrgencyConfig { suppressWhen = Focused, remindWhen = Dont }
   statBar <- statusBar "xmobar" xmobarpp toggleBarKey $ uhook conf
   xmonad statBar
