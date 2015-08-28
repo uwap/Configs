@@ -6,6 +6,7 @@ import Data.Map (Map, fromList)
 import XMonad.Util.Run (safeSpawn)
 import Graphics.X11.ExtraTypes.XF86
 import XMonad.Hooks.UrgencyHook
+import XMonad.Hooks.ManageHelpers
 import XMonad.Actions.CycleWS
 import XMonad.Layout.CenteredMaster
 import XMonad.Layout.Grid
@@ -29,7 +30,8 @@ conf = defaultConfig { modMask            = mod4Mask
                 where
                   workspaces' = ["main","web1"] ++ map (("dev" ++) . show) [1..6] ++ ["game","chat","misc"]
                   startupHook' = return ()
-                  manageHook' = manageHookShifts
+                  manageHook' = handleFullscreenFloat
+                    <+> manageHookShifts
                     [ ("web1", ["Firefox"])
                     , ("chat", ["Skype","Xchat"])
                     , ("dev1", ["Eclipse"])
@@ -47,6 +49,9 @@ manageHookFloats = composeAll . map doFloat'
                 where
                   doFloat' :: String -> ManageHook
                   doFloat' s = className =? s --> doFloat
+
+handleFullscreenFloat :: ManageHook
+handleFullscreenFloat = isFullscreen --> doFloat
 
 keys' :: XConfig Layout -> Map (KeyMask, KeySym) (X ())
 keys' conf@(XConfig {XMonad.modMask = modMask}) = fromList . concat . flip sequence conf . flip sequence modMask $
