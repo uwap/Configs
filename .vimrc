@@ -53,6 +53,9 @@ set smartcase                 " Smart Search
 set hlsearch                  " Highlight Search Results
 set incsearch                 " Modern Search
 
+" Mouse Control
+set mouse=a
+
 " Cursor Movement
 map j gj
 map k gk
