@@ -121,7 +121,7 @@ xmobarpp = xmobarPP { ppSep = " "
                     formatTitle :: String -> String
                     formatTitle str = let title = shorten 30 str in
                        replicate (30 - length title) ' '
-                       ++ xmobarColor "green" "black" $ wrap "<<" ">>" $ xmobarColor "grey" "black" title
+                       ++ xmobarColor "green" "black" (wrap "<<" ">>" $ xmobarColor "grey" "black" title)
 
 main :: IO ()
 main = do
