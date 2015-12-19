@@ -13,8 +13,16 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_haskell_checkers = []
+" GHC Mod linting/checking async
+autocmd BufWritePost *.hs GhcModCheckAndLintAsync
 
-let g:syntastic_haskell_checkers = ['hlint', 'ghc_mod']
+" Autocompletion
+let g:neocomplete#enable_at_startup = 1
+let g:necoghc_enable_detailed_browse = 1
+" Tab Completion
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 """"""""""""""""""""""""
 " General
 """"""""""""""""""""""""
