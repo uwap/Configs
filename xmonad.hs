@@ -55,7 +55,7 @@ handleFullscreenFloat = isFullscreen --> doFloat
 
 keys' :: XConfig Layout -> Map (KeyMask, KeySym) (X ())
 keys' conf@(XConfig {XMonad.modMask = modMask}) = fromList . concat . flip sequence conf . flip sequence modMask $
-  [programs, audio, layouts, focus, shrinkAndExpand, recompileAndQuit, shifts]
+  [programs, audio, layouts, focus, shrinkAndExpand, recompileAndQuit, shifts, keyboardLayouts]
       where
         programs :: KeyMask -> XConfig Layout -> [((KeyMask, KeySym), X ())]
         programs modMask conf = let modMaskS = modMask .|. shiftMask in
@@ -110,6 +110,11 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = fromList . concat . flip seque
           , ((modMaskS, xK_Left ), shiftToPrev)
           , ((modMaskS, xK_j    ), shiftPrevScreen)
           , ((modMaskS, xK_k    ), shiftNextScreen)
+          ]
+        keyboardLayouts :: KeyMask -> XConfig Layout -> [((KeyMask, KeySym), X ())]
+        keyboardLayouts modMask conf = let modMaskS = modMask .|. shiftMask in
+          [ ((modMask , xK_F1), spawn "setxkbmap -layout dvp")
+          , ((modMaskS, xK_F1), spawn "setxkbmap -layout de")
           ]
 
 xmobarpp :: PP
