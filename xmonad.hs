@@ -11,6 +11,7 @@ import XMonad.Actions.CycleWS
 import XMonad.Layout.CenteredMaster
 import XMonad.Layout.Grid
 import XMonad.Layout.LayoutModifier (ModifiedLayout)
+import XMonad.Layout.Fullscreen
 
 toggleBarKey :: XConfig Layout -> (KeyMask, KeySym)
 toggleBarKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
@@ -26,6 +27,7 @@ conf = defaultConfig { modMask            = mod4Mask
                      , startupHook        = startupHook'
                      , keys               = keys'
                      , workspaces         = workspaces'
+                     , handleEventHook    = fullscreenEventHook
                      }
                 where
                   workspaces' = ["main","web1"] ++ map (("dev" ++) . show) [1..6] ++ ["game","chat","misc"]
@@ -54,7 +56,7 @@ handleFullscreenFloat :: ManageHook
 handleFullscreenFloat = isFullscreen --> doFloat
 
 keys' :: XConfig Layout -> Map (KeyMask, KeySym) (X ())
-keys' conf@(XConfig {XMonad.modMask = modMask}) = fromList . concat . flip sequence conf . flip sequence modMask $
+keys' conf@XConfig {XMonad.modMask = modMask} = fromList . concat . flip sequence conf . flip sequence modMask $
   [programs, audio, layouts, focus, shrinkAndExpand, recompileAndQuit, shifts, keyboardLayouts]
       where
         programs :: KeyMask -> XConfig Layout -> [((KeyMask, KeySym), X ())]
