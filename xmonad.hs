@@ -64,7 +64,7 @@ keys' conf@XConfig {XMonad.modMask = modMask} = fromList . concat . flip sequenc
           [ ((modMask , xK_Return), spawn $ terminal conf)
           , ((modMask , xK_p     ), safeSpawn "dmenu_run" [])
           , ((modMaskS, xK_c     ), kill)
-          , ((modMask , xK_l     ), safeSpawn "xscreensaver-command" ["--lock"])
+          , ((modMask , xK_w     ), safeSpawn "xtrlock" [])
           ]
         audio :: KeyMask -> XConfig Layout -> [((KeyMask, KeySym), X ())]
         audio modMask conf =
