@@ -71,10 +71,9 @@ keys' conf@XConfig {XMonad.modMask = modMask} = fromList . concat . flip sequenc
           [ ((0, xF86XK_AudioRaiseVolume), safeSpawn "amixer" ["-q", "set", "Master", "1+"])
           , ((0, xF86XK_AudioLowerVolume), safeSpawn "amixer" ["-q", "set", "Master", "1-"])
           , ((0, xF86XK_AudioMute       ), safeSpawn "amixer" ["-q", "set", "Master", "toggle"])
-          -- use MPD instead of clementine when raspberry pi setup is ready
-          , ((0, xF86XK_AudioPlay       ), safeSpawn "clementine" ["-t"])
-          , ((0, xF86XK_AudioNext       ), safeSpawn "clementine" ["-f"])
-          , ((0, xF86XK_AudioPrev       ), safeSpawn "clementine" ["-r"])
+          , ((0, xF86XK_AudioPlay       ), safeSpawn "mpc" ["toggle"])
+          , ((0, xF86XK_AudioNext       ), safeSpawn "mpc" ["next"])
+          , ((0, xF86XK_AudioPrev       ), safeSpawn "mpc" ["prev"])
           ]
         layouts :: KeyMask -> XConfig Layout -> [((KeyMask, KeySym), X ())]
         layouts modMask conf = let modMaskS = modMask .|. shiftMask in
