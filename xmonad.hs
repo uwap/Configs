@@ -11,34 +11,34 @@ import XMonad.Actions.CycleWS
 import XMonad.Layout.CenteredMaster
 import XMonad.Layout.Grid
 import XMonad.Layout.LayoutModifier (ModifiedLayout)
-import XMonad.Layout.Fullscreen
+import XMonad.Hooks.EwmhDesktops
 
 toggleBarKey :: XConfig Layout -> (KeyMask, KeySym)
 toggleBarKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
 
 conf :: XConfig (Choose Tall (Choose (ModifiedLayout CenteredMaster Grid) Full))
-conf = defaultConfig { modMask            = mod4Mask
-                     , terminal           = "xfce4-terminal"
-                     , borderWidth        = 1
-                     , normalBorderColor  = "#000000"
-                     , focusedBorderColor = "#000066"
-                     , layoutHook         = Tall 1 (3/100) (1/2) ||| centerMaster Grid ||| Full
-                     , manageHook         = manageHook'
-                     , startupHook        = startupHook'
-                     , keys               = keys'
-                     , workspaces         = workspaces'
-                     , handleEventHook    = fullscreenEventHook
-                     }
-                where
-                  workspaces' = ["main","web1"] ++ map (("dev" ++) . show) [1..6] ++ ["game","chat","misc"]
-                  startupHook' = return ()
-                  manageHook' = handleFullscreenFloat
-                    <+> manageHookShifts
-                    [ ("web1", ["Firefox"])
-                    , ("chat", ["Skype","Xchat"])
-                    , ("dev1", ["Eclipse"])
-                    , ("misc", ["Clementine","clementine","Steam"])
-                    ] <+> manageHookFloats []
+conf = ewmh defaultConfig
+     { modMask            = mod4Mask
+     , terminal           = "xfce4-terminal"
+     , borderWidth        = 1
+     , normalBorderColor  = "#000000"
+     , focusedBorderColor = "#000066"
+     , layoutHook         = Tall 1 (3/100) (1/2) ||| centerMaster Grid ||| Full
+     , manageHook         = manageHook'
+     , startupHook        = startupHook'
+     , keys               = keys'
+     , workspaces         = workspaces'
+     , handleEventHook    = fullscreenEventHook
+     } where
+       workspaces' = ["main","web1"] ++ map (("dev" ++) . show) [1..6] ++ ["game","chat","misc"]
+       startupHook' = return ()
+       manageHook' = mempty handleFullscreenFloat
+         <+> manageHookShifts
+         [ ("web1", ["Firefox"])
+         , ("chat", ["Skype","Xchat"])
+         , ("dev1", ["Eclipse"])
+         , ("misc", ["Clementine","clementine","Steam"])
+         ] <+> manageHookFloats []
 
 manageHookShifts :: [(String, [String])] -> ManageHook
 manageHookShifts = composeAll . concatMap doShift
