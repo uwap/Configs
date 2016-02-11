@@ -5,4 +5,8 @@ ln -fs $path/.xinitrc  ~/.xinitrc
 ln -fs $path/.xmobarrc ~/.xmobarrc
 ln -fs $path/xmonad.hs ~/.xmonad/xmonad.hs
 
-ln -fs $path/vim/bundles/idris-vim ~/.vim/bundle/idris-vim
+mkdir -p ~/.vim/bundle/
+mkdir -p ~/.vim/autoload/
+
+ln -fs $path/vim/bundles/* ~/.vim/bundle/
+ln -fs $path/vim/autoload/pathogen.vim ~/.vim/autoload/pathogen.vim

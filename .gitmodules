@@ -1,3 +1,12 @@
 [submodule "vim/bundles/idris-vim"]
 	path = vim/bundles/idris-vim
 	url = https://github.com/idris-hackers/idris-vim.git
+[submodule "vim/autoload/pathogen.vim"]
+	path = vim/autoload/pathogen.vim
+	url = https://github.com/tpope/vim-pathogen
+[submodule "vim/bundles/ghcmod-vim"]
+	path = vim/bundles/ghcmod-vim
+	url = https://github.com/eagletmt/ghcmod-vim
+[submodule "vim/bundles/vimproc.vim"]
+	path = vim/bundles/vimproc.vim
+	url = https://github.com/Shougo/vimproc.vim
