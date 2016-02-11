@@ -19,3 +19,6 @@
 [submodule "vim/bundles/vim-airline"]
 	path = vim/bundles/vim-airline
 	url = https://github.com/vim-airline/vim-airline.git
+[submodule "vim/bundles/neco-ghc"]
+	path = vim/bundles/neco-ghc
+	url = https://github.com/eagletmt/neco-ghc.git
