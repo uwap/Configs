@@ -11,4 +11,6 @@ xcompmgr &
 
 ~/.feh.sh &
 
+firefox & xchat & thunderbird & steam &
+
 exec xmonad

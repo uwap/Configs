@@ -12,6 +12,7 @@ import XMonad.Layout.CenteredMaster
 import XMonad.Layout.Grid
 import XMonad.Layout.LayoutModifier (ModifiedLayout)
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Actions.MouseGestures
 
 toggleBarKey :: XConfig Layout -> (KeyMask, KeySym)
 toggleBarKey XConfig {XMonad.modMask = modMask'} = (modMask', xK_b)
@@ -29,6 +30,7 @@ xconf = ewmh defaultConfig
       , keys               = keys'
       , workspaces         = workspaces'
       , handleEventHook    = fullscreenEventHook
+      , mouseBindings      = mouseBindings'
       } where
         workspaces' = ["main","web1"] ++ map (("dev" ++) . show) [1..6 :: Int] ++ ["game","chat","misc"]
         manageHook' = handleFullscreenFloat
@@ -53,6 +55,19 @@ manageHookFloats = composeAll . map doFloat'
 
 handleFullscreenFloat :: ManageHook
 handleFullscreenFloat = isFullscreen --> doFloat
+
+mouseBindings' :: XConfig Layout -> Map (KeyMask, Button) (Window -> X ())
+mouseBindings' conf@XConfig {XMonad.modMask = modMask'} =
+  fromList [ ((modMask' .|. shiftMask, button1), mouseGesture gestures) ]
+  <+> mouseBindings defaultConfig conf
+
+gestures :: Map [Direction2D] (Window -> X ())
+gestures = fromList [ ([L],   const nextWS)
+                    , ([R],   const prevWS)
+                    , ([R,U], const shiftToNext)
+                    , ([L,U], const shiftToPrev)
+                    , ([D],   const kill)
+                    ]
 
 keys' :: XConfig Layout -> Map (KeyMask, KeySym) (X ())
 keys' conf@XConfig {XMonad.modMask = modMask'} = fromList . concat $
