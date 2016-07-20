@@ -3,6 +3,8 @@ import XMonad.Hooks.DynamicLog
 import System.Exit
 import XMonad.StackSet hiding (workspaces)
 import Data.Map (Map, fromList)
+import Data.List (isInfixOf)
+import Data.Char (toLower)
 import XMonad.Util.Run (safeSpawn)
 import Graphics.X11.ExtraTypes.XF86
 import XMonad.Hooks.UrgencyHook
@@ -15,6 +17,11 @@ import XMonad.Hooks.EwmhDesktops
 import XMonad.Actions.MouseGestures
 import XMonad.Util.EZConfig
 import Control.Monad
+import XMonad.Prompt
+import XMonad.Prompt.Shell
+import XMonad.Prompt.Window
+import XMonad.Prompt.XMonad
+import XMonad.Prompt.Input
 
 toggleBarKey :: XConfig Layout -> (KeyMask, KeySym)
 toggleBarKey XConfig {XMonad.modMask = modMask'} = (modMask', xK_b)
@@ -72,18 +79,25 @@ gestures = fromList [ ([L],   const nextWS)
                     , ([D],   const kill)
                     ]
 
+xprompt :: XPConfig
+xprompt = def { searchPredicate = isInfixOf
+              }
+
 keymap :: [(String, X ())]
-keymap = join [programs, audio, layouts, focus', shrinkAndExpand, recompileAndQuit, shifts, keyboardLayouts]
+keymap = join [programs, audio, layouts, focus', shrinkAndExpand, recompileAndQuit, shifts, keyboardLayouts, screensaver]
       where
         programs =
           [ ("M-<Return>", spawn $ terminal xconf)
-          , ("M-p"       , safeSpawn "dmenu_run" [])
+          , ("M-p"       , shellPrompt xprompt)
+          , ("M-S-p"     , windowPromptBring xprompt)
+          , ("M-o"       , windowPromptBring xprompt)
+          , ("M-S-o"     , xmonadPrompt xprompt)
           , ("M-S-c"     , kill)
           , ("M-w"       , safeSpawn "xtrlock" [])
           ]
         audio =
-          [ ("<XF86AudioRaiseVolume>", safeSpawn "amixer" ["-q", "set", "Master", "1+"])
-          , ("<XF86AudioLowerVolume>", safeSpawn "amixer" ["-q", "set", "Master", "1-"])
+          [ ("<XF86AudioRaiseVolume>", safeSpawn "amixer" ["-q", "set", "Master", "1%+"])
+          , ("<XF86AudioLowerVolume>", safeSpawn "amixer" ["-q", "set", "Master", "1%-"])
           , ("<XF86AudioMute>"       , safeSpawn "amixer" ["-q", "set", "Master", "toggle"])
           , ("<XF86AudioPlay>"       , safeSpawn "mpc" ["toggle"])
           , ("<XF86AudioNext>"       , safeSpawn "mpc" ["next"])
@@ -125,6 +139,11 @@ keymap = join [programs, audio, layouts, focus', shrinkAndExpand, recompileAndQu
           [ ("M-<F1>"  , spawn "setxkbmap -layout dvp")
           , ("M-S-<F1>", spawn "setxkbmap -layout de")
           ]
+        screensaver =
+          [ ("M-<F2>"  , ynInput "Disable screen saving? [Y/N]" $ spawn "xset s off; xset -dpms")
+          , ("M-S-<F2>", ynInput "Enable screen saving? [Y/N]"  $ spawn "xset s on; xset +dpms")
+          ]
+        ynInput str action = inputPrompt xprompt str ?+ \x -> when ("y" `isInfixOf` map toLower x || "j" `isInfixOf` map toLower x) action
 
 xmobarpp :: PP
 xmobarpp = xmobarPP
