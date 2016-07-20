@@ -1,3 +1,24 @@
 [submodule "vim/bundles/idris-vim"]
 	path = vim/bundles/idris-vim
 	url = https://github.com/idris-hackers/idris-vim.git
+[submodule "vim/autoload/pathogen.vim"]
+	path = vim/autoload/pathogen.vim
+	url = https://github.com/tpope/vim-pathogen
+[submodule "vim/bundles/ghcmod-vim"]
+	path = vim/bundles/ghcmod-vim
+	url = https://github.com/eagletmt/ghcmod-vim
+[submodule "vim/bundles/vimproc.vim"]
+	path = vim/bundles/vimproc.vim
+	url = https://github.com/Shougo/vimproc.vim
+[submodule "vim/bundles/syntastic"]
+	path = vim/bundles/syntastic
+	url = https://github.com/scrooloose/syntastic.git
+[submodule "vim/bundles/neocomplete.vim"]
+	path = vim/bundles/neocomplete.vim
+	url = https://github.com/Shougo/neocomplete.vim.git
+[submodule "vim/bundles/vim-airline"]
+	path = vim/bundles/vim-airline
+	url = https://github.com/vim-airline/vim-airline.git
+[submodule "vim/bundles/neco-ghc"]
+	path = vim/bundles/neco-ghc
+	url = https://github.com/eagletmt/neco-ghc.git

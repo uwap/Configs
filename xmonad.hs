@@ -13,6 +13,8 @@ import XMonad.Layout.Grid
 import XMonad.Layout.LayoutModifier (ModifiedLayout)
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Actions.MouseGestures
+import XMonad.Util.EZConfig
+import Control.Monad
 
 toggleBarKey :: XConfig Layout -> (KeyMask, KeySym)
 toggleBarKey XConfig {XMonad.modMask = modMask'} = (modMask', xK_b)
@@ -26,7 +28,7 @@ xconf = ewmh defaultConfig
       , focusedBorderColor = "#000066"
       , layoutHook         = Tall 1 (3/100) (1/2) ||| centerMaster Grid ||| Full
       , manageHook         = manageHook'
-      , startupHook        = return ()
+      , startupHook        = return () >> checkKeymap xconf keymap
       , keys               = keys'
       , workspaces         = workspaces'
       , handleEventHook    = fullscreenEventHook
@@ -40,6 +42,7 @@ xconf = ewmh defaultConfig
           , ("dev1", ["Eclipse"])
           , ("misc", ["Clementine","clementine","Steam"])
           ] <+> manageHookFloats []
+        keys' conf = mkKeymap conf $ ("M-S-<Space>", setLayout $ layoutHook conf) : keymap
 
 manageHookShifts :: [(String, [String])] -> ManageHook
 manageHookShifts = composeAll . concatMap (uncurry shiftToWS)
@@ -69,67 +72,58 @@ gestures = fromList [ ([L],   const nextWS)
                     , ([D],   const kill)
                     ]
 
-keys' :: XConfig Layout -> Map (KeyMask, KeySym) (X ())
-keys' conf@XConfig {XMonad.modMask = modMask'} = fromList . concat $
-  [programs, audio, layouts, focus', shrinkAndExpand, recompileAndQuit, shifts, keyboardLayouts]
+keymap :: [(String, X ())]
+keymap = join [programs, audio, layouts, focus', shrinkAndExpand, recompileAndQuit, shifts, keyboardLayouts]
       where
-        programs :: [((KeyMask, KeySym), X ())]
-        programs = let modMaskS = modMask' .|. shiftMask in
-          [ ((modMask', xK_Return), spawn $ terminal conf)
-          , ((modMask', xK_p     ), safeSpawn "dmenu_run" [])
-          , ((modMaskS, xK_c     ), kill)
-          , ((modMask', xK_w     ), safeSpawn "xtrlock" [])
+        programs =
+          [ ("M-<Return>", spawn $ terminal xconf)
+          , ("M-p"       , safeSpawn "dmenu_run" [])
+          , ("M-S-c"     , kill)
+          , ("M-w"       , safeSpawn "xtrlock" [])
           ]
-        audio :: [((KeyMask, KeySym), X ())]
         audio =
-          [ ((0, xF86XK_AudioRaiseVolume), safeSpawn "amixer" ["-q", "set", "Master", "1+"])
-          , ((0, xF86XK_AudioLowerVolume), safeSpawn "amixer" ["-q", "set", "Master", "1-"])
-          , ((0, xF86XK_AudioMute       ), safeSpawn "amixer" ["-q", "set", "Master", "toggle"])
-          , ((0, xF86XK_AudioPlay       ), safeSpawn "mpc" ["toggle"])
-          , ((0, xF86XK_AudioNext       ), safeSpawn "mpc" ["next"])
-          , ((0, xF86XK_AudioPrev       ), safeSpawn "mpc" ["prev"])
+          [ ("<XF86AudioRaiseVolume>", safeSpawn "amixer" ["-q", "set", "Master", "1+"])
+          , ("<XF86AudioLowerVolume>", safeSpawn "amixer" ["-q", "set", "Master", "1-"])
+          , ("<XF86AudioMute>"       , safeSpawn "amixer" ["-q", "set", "Master", "toggle"])
+          , ("<XF86AudioPlay>"       , safeSpawn "mpc" ["toggle"])
+          , ("<XF86AudioNext>"       , safeSpawn "mpc" ["next"])
+          , ("<XF86AudioPrev>"       , safeSpawn "mpc" ["prev"])
           ]
-        layouts :: [((KeyMask, KeySym), X ())]
-        layouts = let modMaskS = modMask' .|. shiftMask in
-          [ ((modMask', xK_space ), sendMessage NextLayout)
-          , ((modMaskS, xK_space ), setLayout $ layoutHook conf)
-          , ((modMask', xK_t     ), withFocused $ windows . sink)
-          , ((modMask', xK_n     ), refresh)
+        layouts =
+          [ ("M-<Space>"  , sendMessage NextLayout)
+      --  , ("M-S-<Space>", setLayout $ layoutHook conf)
+          , ("M-t"        , withFocused $ windows . sink)
+          , ("M-n"        , refresh)
           ]
-        focus' :: [((KeyMask, KeySym), X ())]
-        focus' = let modMaskS = modMask' .|. shiftMask in 
-          [ ((modMaskS, xK_Tab   ), windows focusUp)
-          , ((modMask', xK_Tab   ), windows focusDown)
-          , ((modMask', xK_m     ), windows focusMaster)
-          , ((modMaskS, xK_Return), windows swapMaster)
-          , ((modMask', xK_Right ), nextWS)
-          , ((modMask', xK_Left  ), prevWS)
-          , ((modMask', xK_j     ), prevScreen)
-          , ((modMask', xK_k     ), nextScreen)
+        focus' =
+          [ ("M-S-<Tab>"   , windows focusUp)
+          , ("M-<Tab>"     , windows focusDown)
+          , ("M-m"         , windows focusMaster)
+          , ("M-S-<Return>", windows swapMaster)
+          , ("M-<Right>"   , nextWS)
+          , ("M-<Left>"    , prevWS)
+          , ("M-j"         , prevScreen)
+          , ("M-k"         , nextScreen)
           ]
-        shrinkAndExpand :: [((KeyMask, KeySym), X ())]
         shrinkAndExpand =
-          [ ((modMask', xK_comma ), sendMessage (IncMasterN 1))
-          , ((modMask', xK_period), sendMessage (IncMasterN (-1)))
-          , ((modMask', xK_h     ), sendMessage Shrink)
-          , ((modMask', xK_l     ), sendMessage Expand)
+          [ ("M-,", sendMessage (IncMasterN 1))
+          , ("M-.", sendMessage (IncMasterN (-1)))
+          , ("M-h", sendMessage Shrink)
+          , ("M-l", sendMessage Expand)
           ]
-        recompileAndQuit :: [((KeyMask, KeySym), X ())]
-        recompileAndQuit = let modMaskS = modMask' .|. shiftMask in
-          [ ((modMaskS, xK_q      ), io exitSuccess)
-          , ((modMask', xK_q      ), spawn "xmonad --recompile; xmonad --restart")
+        recompileAndQuit =
+          [ ("M-S-q", io exitSuccess)
+          , ("M-q"  , spawn "xmonad --recompile; xmonad --restart")
           ]
-        shifts :: [((KeyMask, KeySym), X ())]
-        shifts = let modMaskS = modMask' .|. shiftMask in
-          [ ((modMaskS, xK_Right), shiftToNext)
-          , ((modMaskS, xK_Left ), shiftToPrev)
-          , ((modMaskS, xK_j    ), shiftPrevScreen)
-          , ((modMaskS, xK_k    ), shiftNextScreen)
+        shifts =
+          [ ("M-S-<Right>", shiftToNext)
+          , ("M-S-<Left>" , shiftToPrev)
+          , ("M-S-j"      , shiftPrevScreen)
+          , ("M-S-k"      , shiftNextScreen)
           ]
-        keyboardLayouts :: [((KeyMask, KeySym), X ())]
-        keyboardLayouts = let modMaskS = modMask' .|. shiftMask in
-          [ ((modMask', xK_F1), spawn "setxkbmap -layout dvp")
-          , ((modMaskS, xK_F1), spawn "setxkbmap -layout de")
+        keyboardLayouts =
+          [ ("M-<F1>"  , spawn "setxkbmap -layout dvp")
+          , ("M-S-<F1>", spawn "setxkbmap -layout de")
           ]
 
 xmobarpp :: PP
