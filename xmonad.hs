@@ -45,7 +45,7 @@ xconf = ewmh defaultConfig
         manageHook' = handleFullscreenFloat
           <+> manageHookShifts
           [ ("web1", ["Firefox"])
-          , ("chat", ["Skype","Xchat"])
+          , ("chat", ["Skype","Xchat","mail","Mail","Thunderbird"])
           , ("dev1", ["Eclipse"])
           , ("misc", ["Clementine","clementine","Steam"])
           ] <+> manageHookFloats []
@@ -88,7 +88,7 @@ keymap = join [programs, audio, layouts, focus', shrinkAndExpand, recompileAndQu
       where
         programs =
           [ ("M-<Return>", spawn $ terminal xconf)
-          , ("M-p"       , shellPrompt xprompt)
+          , ("M-p"       , safeSpawn "dmenu_run" []) -- shellPrompt xprompt)
           , ("M-S-p"     , windowPromptBring xprompt)
           , ("M-o"       , windowPromptBring xprompt)
           , ("M-S-o"     , xmonadPrompt xprompt)
@@ -96,9 +96,9 @@ keymap = join [programs, audio, layouts, focus', shrinkAndExpand, recompileAndQu
           , ("M-w"       , safeSpawn "xtrlock" [])
           ]
         audio =
-          [ ("<XF86AudioRaiseVolume>", safeSpawn "amixer" ["-q", "set", "Master", "1%+"])
-          , ("<XF86AudioLowerVolume>", safeSpawn "amixer" ["-q", "set", "Master", "1%-"])
-          , ("<XF86AudioMute>"       , safeSpawn "amixer" ["-q", "set", "Master", "toggle"])
+          [ ("<XF86AudioRaiseVolume>", safeSpawn "amixer" ["-q", "-D", "pulse", "sset", "Master", "1%+"])
+          , ("<XF86AudioLowerVolume>", safeSpawn "amixer" ["-q", "-D", "pulse", "sset", "Master", "1%-"])
+          , ("<XF86AudioMute>"       , safeSpawn "amixer" ["-q", "-D", "pulse", "sset", "Master", "toggle"])
           , ("<XF86AudioPlay>"       , safeSpawn "mpc" ["toggle"])
           , ("<XF86AudioNext>"       , safeSpawn "mpc" ["next"])
           , ("<XF86AudioPrev>"       , safeSpawn "mpc" ["prev"])
