@@ -1,5 +1,5 @@
 Config { font = "-misc-fixed-*-*-*-*-12-*-*-*-*-*-*-*"
-	     , bgColor = "#000033"
+	     , bgColor = "#99006b"
 	     , fgColor = "white"
 	     , position = Top
 	     , lowerOnStart = False
